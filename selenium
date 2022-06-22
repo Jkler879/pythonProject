@@ -13,11 +13,22 @@ web = Chrome(options=option)
 
 web.get('https://kyfw.12306.cn/otn/resources/login.html')
 
+# 输入12306用户名和密码
 web.find_element(By.XPATH, '//*[@id="J-userName"]').send_keys('13120967618')
 web.find_element(By.XPATH, '//*[@id="J-password"]').send_keys('本人密码 就不透露了')
+
+# 点击登录
 web.find_element(By.XPATH, '//*[@id="J-login"]').click()
 
 time.sleep(1)
 
+"""
+1. 出现滑块验证码 表示系统检测出是selenium启动特征
+2. 进入抓包工具 console 输入 window.navigator.webdriver = true (正常浏览器进入结果为false)
+3. 导入options模块
+4. 添加自动化控制参数('--disable-blink-features=AutomationControlled')屏蔽webdriver特征，规避检测
+"""
+
+# 拖拽滑块验证码
 btn = web.find_element(By.XPATH, '//*[@id="nc_1__scale_text"]/span')
 ActionChains(web).drag_and_drop_by_offset(btn, 300, 0).perform()
