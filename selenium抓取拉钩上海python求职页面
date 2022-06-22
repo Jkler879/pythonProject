@@ -1,0 +1,32 @@
+from selenium.webdriver import Chrome
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
+
+web = Chrome()
+
+web.get('https://www.lagou.com/')
+
+# 此处selenium库升级, 案例原代码无效, csdn上搜索到新语法
+"""
+原代码： el = Chrome.find_element_by_xpath('//*[@id="changeCityBox"]/ul/li[2]/a')
+        el.click()
+        已失效        
+"""
+
+# 1. 打开页面, 找到上海区，点击
+web.find_element(By.XPATH, '//*[@id="changeCityBox"]/ul/li[2]/a').click()
+# 2.输入框输入python, 回车
+web.find_element(By.XPATH, '//*[@id="search_input"]').send_keys('python', Keys.ENTER)
+
+time.sleep(1)
+
+# 3. 查找存放数据位置， 数据提取
+# 4. 找到存放数据中所有的li
+li_list = web.find_elements(By.XPATH, '//*[@id="jobList"]/div[1]/div')
+for li in li_list:
+    job_name = li.find_element(By.TAG_NAME, 'a').text  # 此处也改为新语法
+    price = li.find_element(By.XPATH, '//*[@id="jobList"]/div[1]/div[1]/div[1]/div[1]/div[2]/span').text
+    company_name = li.find_element(By.XPATH, './div/div[2]').text
+    print(job_name, price, company_name)
