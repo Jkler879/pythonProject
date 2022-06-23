@@ -1,0 +1,59 @@
+"""
+起点月票榜月票标签及反爬加密字体文件数据分析
+
+"""
+
+import re
+import requests
+from fontTools.ttLib import TTFont
+from io import BytesIO
+
+font_data = {
+    'one': '1',
+    'two': '2',
+    'three': '3',
+    'four': '4',
+    'five': '5',
+    'six': '6',
+    'seven': '7',
+    'eight': '8',
+    'nine': '9',
+    'zero': '0'
+}
+url = 'https://www.qidian.com/rank/yuepiao/'
+
+headers = {
+    'User_Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+    'referer': 'https://www.qidian.com/rank/',
+    'cookie': 'e1=%7B%22pid%22%3A%22qd_P_rank_01%22%2C%22eid%22%3A%22qd_C45%22%2C%22l1%22%3A5%7D; e2=%7B%22pid%22%3A%22qd_p_qidian%22%2C%22eid%22%3A%22qd_A16%22%2C%22l1%22%3A3%7D; _yep_uuid=87bcf4af-108c-3380-5c58-5f03d8dbe309; Hm_lvt_f00f67093ce2f38f215010b699629083=1655956231; newstatisticUUID=1655956231_1423032470; _csrfToken=EyuuQC4Cg4q52oh3aoM4wYSxLOOLCYIKQBhviJ60; fu=1612197229; _gid=GA1.2.1740558368.1655956232; _gat_gtag_UA_199934072_2=1; e1=%7B%22pid%22%3A%22qd_p_qidian%22%2C%22eid%22%3A%22qd_A16%22%2C%22l1%22%3A3%7D; e2=; _ga_FZMMH98S83=GS1.1.1655956231.1.1.1655956235.0; _ga_PFYW0QLV3P=GS1.1.1655956231.1.1.1655956235.0; Hm_lpvt_f00f67093ce2f38f215010b699629083=1655956236; _ga=GA1.2.1500895988.1655956231'
+}
+
+res = requests.get(url, headers=headers)
+
+# 1.正则获取字体文件
+res1 = re.findall(r"\); src: url\('(.*?)'\) format\('woff'\)", res.text)[0]
+# print(res1)
+
+# 2.数据获取
+res_data = re.findall(r'</style><span class=".*?">(.*?);</span></span>月票</p>', res.text)[0]
+print(res_data)
+
+# 3.数据清洗：去掉特殊符号
+res_sp = res_data.replace('&#', '').split(';')
+# print(res_sp)
+
+# 4.传入字体文件url
+res2 = requests.get(res1)
+
+# 5.得到字体文件
+font2 = TTFont(BytesIO(res2.content))
+
+# 6.获取字体文件中的映射关系，保存数据
+camp = font2.getBestCmap()
+font2.close()
+
+print(camp)
+
+#  print结果：&#100110;&#100107;&#100102;&#100102;&#100105;&#100107
+#  {100102: 'zero', 100104: 'four', 100105: 'eight', 100106: 'period', 100107: 'three', 100108: 'nine', 100109: 'seven', 100110: 'two', 100111: 'five', 100112: 'one', 100113: 'six'}
+#  得出加密数据结果：230083(实时数据)
