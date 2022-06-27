@@ -1,0 +1,21 @@
+"""
+1.将验证码原图进行灰度处理
+2.灰度处理后的图片进行二值化处理
+"""
+import tesserocr
+from PIL import Image
+
+image = Image.open('1.jpg')
+image = image.convert('L')   # 灰度处理 PIL有9种模式 L为灰度处理
+image.save('1.1.jpg')   # 转化后发现图片有线条，对其二值化
+threshold = 125  # 此处调试多次(默认阀值为127)
+table = []
+for i in range(256):
+    if i < threshold:
+        table.append(0)
+    else:
+        table.append(1)
+image = image.point(table, '1')  # image.point(table,mode) mode内数值为颜色模式
+image.show()
+result = tesserocr.image_to_text(image)
+print(result)  # 验证码调度成功
