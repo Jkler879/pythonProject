@@ -1,0 +1,17 @@
+# 第一种： 通过params携带请求参数
+# 1.构建请求参数字典
+# 2.发送请求得时候带上请求参数字典
+import requests
+
+url = 'https://www.baidu.com/s?'
+# 构建请求参数字典
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36',
+    'cookie': 'BIDUPSID=34DB714A2CF2D2835D18B94DF9635477; PSTM=1656385840; BD_UPN=12314753; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; ab_sr=1.0.1_YTQzY2VkMzMyNDRhNDcyZWQ0NDMxMTI3MTE2Yzg2YzZmMmI1YjQ0YjNlOTdhYjI0YWVjYjkwMGQwMDBiN2E1NjBhNzAwNmNjODkyNjk4ZmJmNzU2NGQ1YjQxMGI3ZDc5YjY5MjE5ZmM1YTgxMWY2N2ZiMjJjMzY0Nzk2M2Q1ODQ2ZWVmMmI4ZThiYjgwZjE3NTY3NzI4OGRlMmVmYjVmYg==; BAIDUID=7BFA05B973E99A32ECCE71D7FF4A2FDE:FG=1; delPer=0; BD_CK_SAM=1; PSINO=7; H_PS_PSSID=36544_36626_36673_36454_31254_36453_36692_36167_36694_36698_36569_36073_36292_26350_36469; BA_HECTOR=0h2k8k2l8k84248la01hbktol14; ZFY=jwExszQt936cZew2wSJDLWqrLCP1:BERWJzT9fwLiJPA:C; H_PS_645EC=6c18QWLKrF56d9sz0%2BPz18m1siMR7r85z%2FWkhhuTJdq%2BFBP248PVcQztblo; baikeVisitId=0dc566e4-c256-42a4-b295-5fea7b3b3b07; COOKIE_SESSION=57_0_6_6_1_9_1_0_6_5_219_1_0_0_0_0_1656385870_0_1656387404%7C6%230_0_1656387404%7C1'
+}
+
+name = input('请输入关键字:')
+params = {'wd': name}
+res = requests.get(url, headers=headers, params=params)
+print(res.content.decode())
