@@ -1,0 +1,9 @@
+# 1. 搜索b站'反爬'，找到包含单页36个视频链接的url
+# 2. 解析响应里的url 36个url
+# 3. 对url发送请求，获取单个视频响应内容
+# 4. 分别提取音视频url并对其发送请求
+# 5. 保存数据
+
+import requests
+import re
+from lxml import etree
