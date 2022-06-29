@@ -1,0 +1,30 @@
+""""
+任务：猪八戒网爬取“saas”标签内首页商品的名字，价格，销量，地点
+"""
+
+
+import requests
+from lxml import etree
+
+# 1.请求数据
+url = 'https://www.zbj.com/search/service?l=0&kw=saas&r=1'
+
+headers = {
+    'User-Agent': 'ozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+}
+
+res = requests.get(url, headers=headers)
+
+# 2.获取数据
+#print(res.text)
+
+html = etree.HTML(res.text)
+
+# 3.提取数据
+divs = html.xpath('//*[@id="__layout"]/div/div[3]/div/div[3]/div[4]/div[1]')
+for div in divs:
+    name = div.xpath('./div[*]/div[3]/a/text()')
+    price = div.xpath('./div/div[3]/div[1]/span/text()')  # 此处数据清洗出现问题 [0].strip('￥')无效，希望有大神告知
+    sales_volume = div.xpath('./div[*]/div[3]/div[2]/div[2]/span[2]/text()')
+    location = div.xpath('./div[*]/div[3]/div[1]/div/text()')
+    print(name, price, sales_volume, location)
