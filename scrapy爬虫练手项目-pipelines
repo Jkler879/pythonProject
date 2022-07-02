@@ -1,0 +1,17 @@
+import json
+
+class Jkler879Pipeline(object):
+    def __init__(self):
+        self.file = open('itcast.json', 'w')
+
+    def process_item(self, item, spider):
+        # print('itcast:', item)
+        # 默认使用完管道之后需要将数据返回给引擎
+        json_data = json.dumps(item, ensure_ascii=False) + ', \n'
+
+        self.file.write(json_data)
+
+        return item
+
+    def __del__(self):
+        self.file.close()
