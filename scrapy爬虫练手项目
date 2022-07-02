@@ -1,0 +1,25 @@
+import scrapy
+
+
+class ItcastSpider(scrapy.Spider):
+    name = 'itcast'
+    allowed_domains = ['itcast.cn']
+    start_urls = ['https://www.itcast.cn/channel/teacher.shtml#ajavaee']
+
+    def parse(self, response):
+        # 定义对于网站的相关操作
+
+        # 1 获取所有教师节点
+        techer_list = response.xpath('//div[@class="li_txt"]')
+        print(len(techer_list))
+        # 2 遍历教师节点列表
+        for teacher in techer_list:
+            temp = {}
+
+            # xpath方法返回的是选择器对象列表, extract()用于从选择器对象中提取数据
+            # extract_first()提取第一个数据 适用范围：当前面xpath提取的数据为单个时 多个用extract()
+            temp['name'] = teacher.xpath('./h3/text()')[0].extract()
+            temp['title'] = teacher.xpath('./h4/text()')[0].extract()
+            temp['introduce'] = teacher.xpath('./p/text()')[0].extract()
+
+            yield temp
