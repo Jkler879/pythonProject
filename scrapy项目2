@@ -1,0 +1,39 @@
+# 只有spider文件代码
+
+import scrapy
+from ..items import TxmoviesItem
+
+class TxmsSpider(scrapy.Spider):
+    name = 'txms'
+    allowed_domains = ['v.qq.com']
+    url = 'https://v.qq.com/x/bu/pagesheet/list?append=1&channel=cartoon&iarea=1&listpage=2&offset={}&pagesize=30'
+    offset = 0
+# url第一页offset=0，第二页为30，依次推列，给一个范围，无限大可能会报错，这边只给了120，4页
+
+
+    def start_requests(self):
+        for i in range(0, 121, 30):
+            url = self.url.format(i)
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse
+            )
+            # 重写start_requests
+
+    def parse(self, response):
+        items = TxmoviesItem()
+        lists = response.xpath('//div[@class="list_item"]')
+        for i in lists:
+            items['name'] = i.xpath('./a/@title').get()
+            items['description'] = i.xpath('./div/div/@title').get()
+
+            yield items
+            # 第二个yield移交控制权，item文件封装数据后，就调用yield把控制权给管道，管道拿到处理后return返回，又回到该程序
+
+        if self.offset < 120:
+            self.offset += 30
+            url = 'https://v.qq.com/x/bu/pagesheet/list?append=1&channel=cartoon&iarea=1&listpage=2&offset={}&pagesize=30'.format(
+                str(self.offset))
+
+            yield scrapy.Request(url=url, callback=self.parse)
+            # 第三个yield利用了回调机制，回调的对象是parse，就是当前方法，通过不断回调，程序进入循环，如果不加if条件，就会陷入死循环
